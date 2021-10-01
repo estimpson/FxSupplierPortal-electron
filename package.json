@@ -27,7 +27,7 @@
         "web-vitals": "^1.1.2"
     },
     "scripts": {
-        "start": "concurrently -k \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electronmon .\"",
+        "start": "npm run main-build && concurrently -k \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electronmon .\"",
         "build": "npm run react-build && npm run main-build && npm run electron-build",
         "dotnet-build": "shx rm -rf dotnet/bin && dotnet publish dotnet/api.csproj -c release -r win10-x64 -o ./dotnet-win && dotnet publish dotnet/api.csproj -c release -r osx.10.11-x64 -o ./dotnet-osx && dotnet publish dotnet/api.csproj -c release -r ubuntu.16.10-x64 -o ./dotnet-ubuntu",
         "dotnet-start": "dotnet run -p dotnet/api.csproj",
@@ -69,7 +69,6 @@
             "build/**/*",
             "node_modules/**/*"
         ],
-
         "directories": {
             "buildResources": "build",
             "output": "dist"
@@ -77,7 +76,6 @@
         "extraMetadata": {
             "main": "buildMain/electron.js"
         },
-
         "win": {
             "asarUnpack": "dotnet-win",
             "files": [

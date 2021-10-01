@@ -1,44 +1,42 @@
 {
-    "name": "fx-supplier-portal",
-    "version": "0.3.2",
-    "description": "Fx Supplier Portal (Aztec)",
+    "name": "secure-electron-cra-dotnet",
+    "version": "0.1.0",
     "private": true,
+    "author": "John Doe",
+    "description": "Secure Electron-CRA app",
+    "main": "./buildMain/electron.js",
+    "homepage": "./",
     "dependencies": {
-        "@fortawesome/fontawesome-svg-core": "^1.2.36",
-        "@fortawesome/free-brands-svg-icons": "^5.15.4",
-        "@fortawesome/free-regular-svg-icons": "^5.15.4",
-        "@fortawesome/free-solid-svg-icons": "^5.15.4",
-        "@fortawesome/react-fontawesome": "^0.1.15",
-        "@reduxjs/toolkit": "^1.6.1",
         "@testing-library/jest-dom": "^5.14.1",
-        "@testing-library/react": "^12.0.0",
-        "@testing-library/user-event": "^13.2.1",
+        "@testing-library/react": "^11.2.7",
+        "@testing-library/user-event": "^12.8.3",
         "@types/jest": "^26.0.24",
-        "@types/node": "^16.4.13",
-        "@types/react": "^17.0.16",
-        "@types/react-bootstrap": "^0.32.26",
+        "@types/node": "^12.20.24",
+        "@types/react": "^17.0.20",
         "@types/react-dom": "^17.0.9",
-        "@types/react-redux": "^7.1.18",
-        "@types/react-router-bootstrap": "^0.24.5",
-        "@types/react-router-dom": "^5.1.8",
-        "axios": "^0.21.1",
-        "bootstrap": "^5.1.0",
+        "@types/uuid": "^8.3.1",
+        "axios": "^0.21.4",
+        "cross-spawn": "^7.0.3",
+        "date-fns": "^2.23.0",
+        "get-port": "^5.1.1",
         "react": "^17.0.2",
-        "react-bootstrap": "2.0.0-beta.4",
         "react-dom": "^17.0.2",
-        "react-redux": "^7.2.4",
-        "react-router-bootstrap": "0.25.0",
-        "react-router-dom": "^5.2.0",
         "react-scripts": "4.0.3",
-        "redux-persist": "^6.0.0",
-        "typescript": "^4.3.5",
-        "web-vitals": "^2.1.0"
+        "typescript": "^4.4.3",
+        "uuid": "^8.3.2",
+        "web-vitals": "^1.1.2"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "start": "npm run main-build && concurrently -k \"cross-env BROWSER=none npm run react-start\" \"wait-on http://localhost:3000 && electronmon .\"",
+        "build": "npm run react-build && npm run main-build && npm run electron-build",
+        "dotnet-build": "shx rm -rf dotnet/bin && dotnet publish dotnet/api.csproj -c release -r win10-x64 -o ./dotnet-win && dotnet publish dotnet/api.csproj -c release -r osx.10.11-x64 -o ./dotnet-osx && dotnet publish dotnet/api.csproj -c release -r ubuntu.16.10-x64 -o ./dotnet-ubuntu",
+        "dotnet-start": "dotnet run -p dotnet/api.csproj",
+        "electron-build": "electron-builder",
+        "main-build": "tsc -p tsconfig.electronMain.json",
+        "react-start": "react-scripts start",
+        "react-build": "react-scripts build",
+        "react-test": "react-scripts test",
+        "react-eject": "react-scripts eject"
     },
     "eslintConfig": {
         "extends": [
@@ -48,18 +46,44 @@
     },
     "browserslist": {
         "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
+            "last 1 electron version"
         ],
         "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
+            "last 1 electron version"
         ]
     },
     "devDependencies": {
+        "@types/cross-spawn": "^6.0.2",
+        "concurrently": "^6.2.1",
+        "cross-env": "^7.0.3",
         "electron": "^14.0.0",
-        "node-sass": "^6.0.1"
+        "electron-builder": "^22.11.7",
+        "electronmon": "^2.0.2",
+        "shx": "^0.3.3",
+        "wait-on": "^6.0.0"
+    },
+    "build": {
+        "appId": "com.electon.myapp",
+        "productName": "My Electron App",
+        "files": [
+            "build/**/*",
+            "node_modules/**/*"
+        ],
+        "directories": {
+            "buildResources": "build",
+            "output": "dist"
+        },
+        "extraMetadata": {
+            "main": "buildMain/electron.js"
+        },
+        "win": {
+            "asarUnpack": "dotnet-win",
+            "files": [
+                "node_modules/**",
+                "buildMain/**",
+                "dotnet-win/**"
+            ],
+            "target": "nsis"
+        }
     }
 }
